@@ -1,6 +1,7 @@
 """
-task: In view function, when we rename a file or a rask the file should be modified
-from the old task name to the new one.
+task: Fix the lower problem in the rename file, from view function
+cause: When I just put a name and try to rename it the sys create a new file and they say that the file
+has been modified.
 """
 
 import datetime
@@ -78,7 +79,7 @@ def view_task():
                 original_task_name = os.path.join(todo_dir, task_to_rename)
                 new_task_name = os.path.join(todo_dir, new_name)
                 # Need to fix
-                with open(fr"", "w") as rewrite_file:
+                with open(new_task_name, "w") as rewrite_file:
                     rewrite_file.write(f"New file renamed as {new_task_name}")
                 try:
                     os.rename(original_task_name, new_task_name)
