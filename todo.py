@@ -1,3 +1,8 @@
+"""
+task: In view function, when we rename a file or a rask the file should be modified
+from the old task name to the new one.
+"""
+
 import datetime
 import os
 import subprocess
@@ -17,6 +22,7 @@ except OSError:
     pass
 
 
+# Function to put all the files list into it
 def get_files_list():
     """Helper function to get the current list of tasks."""
     return os.listdir(todo_dir)
@@ -65,11 +71,15 @@ def view_task():
 
         rename_file = input("Do you want to rename a file? (yes/y or no/n): \n$ ").strip().lower()
         if rename_file in ("yes", "y"):
-            task_to_rename = input("Old task name: ").strip()
-            if task_to_rename in files_list:
+            task_to_rename = input("Old task name: ").strip().lower()
+            lower_files_list = [file.lower() for file in files_list]
+            if task_to_rename in lower_files_list:
                 new_name = input("Task new name: ").strip()
                 original_task_name = os.path.join(todo_dir, task_to_rename)
                 new_task_name = os.path.join(todo_dir, new_name)
+                # Need to fix
+                with open(fr"", "w") as rewrite_file:
+                    rewrite_file.write(f"New file renamed as {new_task_name}")
                 try:
                     os.rename(original_task_name, new_task_name)
                     print(f"Task renamed from '{task_to_rename}' to '{new_name}'")
@@ -145,4 +155,3 @@ while True:
     print("__"*50)
     print("")
     print(" ")
-# Need to fix when the user enter his file name even if the name was upper it
