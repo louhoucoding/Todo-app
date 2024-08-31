@@ -1,7 +1,6 @@
 """
-task: Fix the lower problem in the rename file, from view function
-cause: When I just put a name and try to rename it the sys create a new file and they say that the file
-has been modified.
+task: When the file name change the file isn't readable
+cause: when we change a name of file and continuing the program its like the file doesn't exists
 """
 
 import datetime
@@ -64,6 +63,7 @@ def add_task():
             time.sleep(1)
 
 
+# Function to view a task
 def view_task():
     files_list = get_files_list()  # Refresh files list
     if len(files_list) > 0:
@@ -78,29 +78,34 @@ def view_task():
                 new_name = input("Task new name: ").strip()
                 original_task_name = os.path.join(todo_dir, task_to_rename)
                 new_task_name = os.path.join(todo_dir, new_name)
-                # Need to fix
-                with open(new_task_name, "w") as rewrite_file:
-                    rewrite_file.write(f"New file renamed as {new_task_name}")
-                try:
-                    os.rename(original_task_name, new_task_name)
-                    print(f"Task renamed from '{task_to_rename}' to '{new_name}'")
-                except FileExistsError:
+                if os.path.exists(new_task_name):
                     print(f"A task with the name '{new_name}' already exists. Please choose a different name.")
-                except OSError as E:
-                    print(f"An error occurred while renaming the task: {E}")
+                else:
+                    try:
+                        os.rename(original_task_name, new_task_name)
+                        print(f"Task renamed from '{task_to_rename}' to '{new_name}'")
+                    except OSError as E:
+                        print(f"An error occurred while renaming the task: {E}")
             else:
                 print(f"There is no task with the name '{task_to_rename}'.")
                 print("Back...")
                 time.sleep(1)
-        elif rename_file in ("no", "n"):
+        elif rename_file in ("no", "n", "o"):
             print("Back...")
         else:
             print("Please check your answer and try again.")
-
+        # Viewing tasks
+        print("Tasks to view")
         v_task = input("Task name to view: ").strip()
         if v_task in files_list:
-            with open(os.path.join(todo_dir, v_task), "r", encoding="utf-8") as f:
-                print(f.read())
+            try:
+                with open(os.path.join(todo_dir, v_task), "r", encoding="utf-8") as f:
+                    print(f.read())
+
+            except FileNotFoundError as E:
+                print(f"The file Doesn't exists.")
+                print("Back...")
+                time.sleep(1)
         else:
             print(f"There is no task with the name '{v_task}'.")
     else:
@@ -154,5 +159,4 @@ while True:
 
     time.sleep(3)
     print("__"*50)
-    print("")
-    print(" ")
+   
