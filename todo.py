@@ -1,6 +1,6 @@
 """
-task: When the file name change the file isn't readable
-cause: when we change a name of file and continuing the program its like the file doesn't exists
+task: View Task
+cause: looping the rename method
 """
 
 import datetime
@@ -66,10 +66,12 @@ def add_task():
 # Function to view a task
 def view_task():
     files_list = get_files_list()  # Refresh files list
+    # Printing the tasks
     if len(files_list) > 0:
         for i, file in enumerate(files_list, start=1):
             print(f"[#{i}] => {file}")
 
+        # Renaming tasks
         rename_file = input("Do you want to rename a file? (yes/y or no/n): \n$ ").strip().lower()
         if rename_file in ("yes", "y"):
             task_to_rename = input("Old task name: ").strip().lower()
@@ -92,22 +94,29 @@ def view_task():
                 time.sleep(1)
         elif rename_file in ("no", "n", "o"):
             print("Back...")
+            time.sleep(1)
         else:
             print("Please check your answer and try again.")
         # Viewing tasks
         print("Tasks to view")
-        v_task = input("Task name to view: ").strip()
-        if v_task in files_list:
-            try:
-                with open(os.path.join(todo_dir, v_task), "r", encoding="utf-8") as f:
-                    print(f.read())
+        for i, file in enumerate(get_files_list(), start=1):
+            print(f"[#{i}] => {file}")
 
-            except FileNotFoundError as E:
-                print(f"The file Doesn't exists.")
-                print("Back...")
-                time.sleep(1)
-        else:
-            print(f"There is no task with the name '{v_task}'.")
+        # Viewing tasks
+        while True:
+            v_task = input("Task name to view: ").strip()
+            if v_task in files_list:
+                try:
+                    with open(os.path.join(todo_dir, v_task), "r", encoding="utf-8") as f:
+                        print(f.read())
+                        break
+                except FileNotFoundError:
+                    print("")
+
+            elif v_task in ("Exit", "exit", "EXIT"):
+                break
+            else:
+                print(f"There is no task with the name '{v_task}'.")
     else:
         print("Your files list is empty.")
 
