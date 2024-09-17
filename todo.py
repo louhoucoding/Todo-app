@@ -71,32 +71,38 @@ def view_task():
         for i, file in enumerate(files_list, start=1):
             print(f"[#{i}] => {file}")
 
-        # Renaming tasks
-        rename_file = input("Do you want to rename a file? (yes/y or no/n): \n$ ").strip().lower()
-        if rename_file in ("yes", "y"):
-            task_to_rename = input("Old task name: ").strip().lower()
-            lower_files_list = [file.lower() for file in files_list]
-            if task_to_rename in lower_files_list:
-                new_name = input("Task new name: ").strip()
-                original_task_name = os.path.join(todo_dir, task_to_rename)
-                new_task_name = os.path.join(todo_dir, new_name)
-                if os.path.exists(new_task_name):
-                    print(f"A task with the name '{new_name}' already exists. Please choose a different name.")
+        while True:
+            # Renaming tasks
+            rename_file = input(
+                "Do you want to rename a file? (yes/y or no/n to stop renaming): \n$ ").strip().lower()
+            if rename_file in ("yes", "y"):
+                task_to_rename = input("Old task name: ").strip().lower()
+                lower_files_list = [file.lower() for file in files_list]
+                if task_to_rename in lower_files_list:
+                    new_name = input("Task new name: ").strip()
+                    original_task_name = os.path.join(todo_dir, task_to_rename)
+                    new_task_name = os.path.join(todo_dir, new_name)
+                    if os.path.exists(new_task_name):
+                        print(f"A task with the name '{new_name}' already exists. Please choose a different name.")
+                    else:
+                        try:
+                            os.rename(original_task_name, new_task_name)
+                            print(f"Task renamed from '{task_to_rename}' to '{new_name}'")
+                            # Refresh the file list after renaming
+                            files_list = get_files_list()
+                        except OSError as E:
+                            print(f"An error occurred while renaming the task: {E}")
                 else:
-                    try:
-                        os.rename(original_task_name, new_task_name)
-                        print(f"Task renamed from '{task_to_rename}' to '{new_name}'")
-                    except OSError as E:
-                        print(f"An error occurred while renaming the task: {E}")
-            else:
-                print(f"There is no task with the name '{task_to_rename}'.")
-                print("Back...")
+                    print(f"There is no task with the name '{task_to_rename}'.")
+                    print("Back...")
+                    time.sleep(1)
+            elif rename_file in ("no", "n"):
+                print("Exiting rename mode...")
                 time.sleep(1)
-        elif rename_file in ("no", "n", "o"):
-            print("Back...")
-            time.sleep(1)
-        else:
-            print("Please check your answer and try again.")
+                break
+            else:
+                print("Please check your answer and try again.")
+
         # Viewing tasks
         print("Tasks to view")
         for i, file in enumerate(get_files_list(), start=1):
@@ -114,6 +120,8 @@ def view_task():
                     print("")
 
             elif v_task in ("Exit", "exit", "EXIT"):
+                print("Exiting...")
+                time.sleep(1)
                 break
             else:
                 print(f"There is no task with the name '{v_task}'.")
